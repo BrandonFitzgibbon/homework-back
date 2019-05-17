@@ -30,7 +30,7 @@ jobs:
         executor: primary
         steps:
           - attach_workspace:
-              at: /dist
+              at: ./dist
           - setup_remote_docker:
               docker_layer_caching: true
           - run:
