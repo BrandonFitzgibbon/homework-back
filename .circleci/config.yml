@@ -43,10 +43,10 @@ jobs:
                 TAG=0.1.$CIRCLE_BUILD_NUM
                 sudo apt-get install python-pip python-dev
                 sudo pip install awscli --upgrade --user
+                PATH=~/.local/bin/aws:$PATH
                 aws configure set aws_access_key_id $AWS_ACCESS
                 configure set aws_secret_access_key $AWS_SECRET
                 $(aws ecr get-login --no-include-email --region ca-central-1)
-                PATH=~/.local/bin/aws:$PATH
                 docker build -t homework .
                 docker tag homework:$TAG 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
                 docker push 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
