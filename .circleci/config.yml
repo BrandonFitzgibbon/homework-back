@@ -5,7 +5,7 @@ jobs:
         - image: circleci/node:latest
       steps:
           - checkout
-          - run
+          - run:
               name: Versions
               command: |
                 node --version
