@@ -15,7 +15,7 @@ jobs:
               command: npm install
           - run:
               name: Compile
-              command: tsc
+              command: ./node_modules/typescript/bin/tsc
           - run:
               name: Tests
               command: npm test
