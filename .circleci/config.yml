@@ -14,5 +14,8 @@ jobs:
               name: Dependencies
               command: npm install
           - run:
+              name: Compile
+              command: tsc
+          - run:
               name: Tests
               command: npm test
