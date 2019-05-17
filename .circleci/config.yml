@@ -10,3 +10,9 @@ jobs:
               command: |
                 node --version
                 npm --version
+          - run:
+              name: Dependencies
+              command: npm install
+          - run:
+              name: Tests
+              command: npm test

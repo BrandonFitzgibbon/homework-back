@@ -1,0 +1,20 @@
+{
+  "name": "homework-back",
+  "version": "0.0.1",
+  "description": "homework project for demonstration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrandonFitzgibbon/homework-back.git"
+  },
+  "author": "Brandon Fitzgibbon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BrandonFitzgibbon/homework-back/issues"
+  },
+  "homepage": "https://github.com/BrandonFitzgibbon/homework-back#readme"
+}
