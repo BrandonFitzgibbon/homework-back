@@ -1,7 +1,6 @@
 version: 2
 jobs:
     build:
-      context: DockerHub
       docker:
         - image: circleci/node:latest
       steps:
@@ -29,3 +28,9 @@ jobs:
                 docker build -t brandonfitzgibbon/repo:$TAG .
                 docker login -u $DOCKER_USER -p $DOCKER_PASS
                 docker push brandonfitzgibbon/repo:$TAG
+workflows:
+  version: 2
+  workflow:
+    jobs:
+        - build
+            context: DockerHub
