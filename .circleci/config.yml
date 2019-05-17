@@ -36,7 +36,7 @@ jobs:
               docker_layer_caching: true
           - run:
               name: Dependencies
-              command: npm install --production
+              command: npm install --only=prod
           - run:
               name: Publish
               command: |
@@ -46,6 +46,7 @@ jobs:
                 aws configure set aws_access_key_id $AWS_ACCESS
                 configure set aws_secret_access_key $AWS_SECRET
                 $(aws ecr get-login --no-include-email --region ca-central-1)
+                PATH=~/.local/bin/aws:$PATH
                 docker build -t homework .
                 docker tag homework:$TAG 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
                 docker push 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
