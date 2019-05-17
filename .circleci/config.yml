@@ -29,8 +29,8 @@ jobs:
                 docker login -u $DOCKER_USER -p $DOCKER_PASS
                 docker push brandonfitzgibbon/repo:$TAG
 workflows:
-  version: 2
-  workflow:
-    jobs:
+    version: 2
+    workflow:
+        jobs:
         - build
             context: DockerHub
