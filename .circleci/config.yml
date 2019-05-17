@@ -23,22 +23,26 @@ jobs:
               name: Tests
               command: npm test
           - persist_to_workspace:
-              root: dist
+              root: .
               paths:
-                - .
+                - /dist
+                - package.json
     publish:
         executor: primary
         steps:
           - attach_workspace:
-              at: ./dist
+              at: .
           - setup_remote_docker:
               docker_layer_caching: true
+          - run:
+              name: Dependencies
+              command: npm install --production
           - run:
               name: Publish
               command: |
                 TAG=0.1.$CIRCLE_BUILD_NUM
                 sudo apt-get install python-pip python-dev
-                sudo pip install awscli
+                sudo pip install awscli --upgrade --user
                 aws configure set aws_access_key_id $AWS_ACCESS
                 configure set aws_secret_access_key $AWS_SECRET
                 $(aws ecr get-login --no-include-email --region ca-central-1)
