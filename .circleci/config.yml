@@ -42,8 +42,8 @@ jobs:
                     curl -O https://bootstrap.pypa.io/get-pip.py
                     python3 get-pip.py --user
                     pip3 install awscli --upgrade --user
-                    ls /home/circleci/.local/bin/
-                    PATH=/home/circleci/.local/bin/aws:$PATH
+                    ls /home/circleci/.local/bin/aws
+                    export PATH=/home/circleci/.local/bin/aws:$PATH
                     aws configure set aws_access_key_id $AWS_ACCESS
                     configure set aws_secret_access_key $AWS_SECRET
                     $(aws ecr get-login --no-include-email --region ca-central-1)
