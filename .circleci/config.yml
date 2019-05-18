@@ -24,6 +24,7 @@ jobs:
                 paths:
                     - ./dist
                     - package.json
+                    - Dockerfile
     publish:
         docker:
             - image: circleci/python:latest-node
