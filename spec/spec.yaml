@@ -7,6 +7,13 @@ servers:
   - url: http://localhost:8001/
     description: local server
 paths:
+  /:
+    get:
+      summary: health check
+      operationId: health
+      responses:
+        '200':
+          description: healthy endpoint
   /entries:
     post:
       summary: creates a new forum post entry
