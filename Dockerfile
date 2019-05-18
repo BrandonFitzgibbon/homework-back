@@ -1,7 +1,5 @@
 FROM node:8.16.0-alpine
-
-COPY . /app
-
+COPY ./dist /app
+COPY ./spec /app
+COPY ./node_modules /app
 WORKDIR /app
-
-CMD ["node", "./dist/app.js"]

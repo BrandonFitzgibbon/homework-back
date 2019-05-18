@@ -23,6 +23,7 @@ jobs:
                 root: .
                 paths:
                     - ./dist
+                    - ./spec
                     - package.json
                     - Dockerfile
     publish:
