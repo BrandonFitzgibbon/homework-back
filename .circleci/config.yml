@@ -47,7 +47,7 @@ jobs:
                     aws configure set aws_access_key_id $AWS_ACCESS
                     aws configure set aws_secret_access_key $AWS_SECRET
                     $(aws ecr get-login --no-include-email --region ca-central-1)
-                    docker build -t homework .
+                    docker build -t homework:$TAG .
                     docker tag homework:$TAG 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
                     docker push 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
 workflows:
