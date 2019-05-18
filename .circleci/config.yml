@@ -44,7 +44,7 @@ jobs:
                     pip3 install awscli --upgrade --user
                     export PATH=/home/circleci/.local/bin:$PATH
                     aws configure set aws_access_key_id $AWS_ACCESS
-                    configure set aws_secret_access_key $AWS_SECRET
+                    aws configure set aws_secret_access_key $AWS_SECRET
                     $(aws ecr get-login --no-include-email --region ca-central-1)
                     docker build -t homework .
                     docker tag homework:$TAG 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
