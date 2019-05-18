@@ -43,7 +43,7 @@ jobs:
                 TAG=0.1.$CIRCLE_BUILD_NUM
                 sudo apt-get install python-pip python-dev
                 sudo pip install awscli --upgrade --user
-                ls /usr/bin/
+                ls /usr/local/bin
                 PATH=/usr/bin/aws:$PATH
                 aws configure set aws_access_key_id $AWS_ACCESS
                 configure set aws_secret_access_key $AWS_SECRET
