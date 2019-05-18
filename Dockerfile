@@ -1,5 +1,4 @@
 FROM node:8.16.0-alpine
-COPY ./dist /app
-COPY ./spec /app
-COPY ./node_modules /app
-WORKDIR /app
+COPY ./dist /app/dist/
+COPY ./spec /app/spec/
+COPY ./node_modules /app/node_modules/
