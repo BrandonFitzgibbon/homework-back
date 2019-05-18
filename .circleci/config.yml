@@ -8,8 +8,8 @@ jobs:
             - run:
                 name: Versions
                 command: |
-                node --version
-                npm --version
+                    node --version
+                    npm --version
             - run:
                 name: Dependencies
                 command: npm install
