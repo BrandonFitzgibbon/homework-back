@@ -4,4 +4,4 @@ COPY . /app
 
 WORKDIR /app
 
-CMD npm start
+CMD ["node", "./dist/app.js"]
