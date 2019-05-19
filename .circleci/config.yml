@@ -20,8 +20,8 @@ jobs:
                 name: Compile
                 command: ./node_modules/typescript/bin/tsc
             - run:
-                name: Tests
-                command: npm test
+                name: Coverage & Test
+                command: npm run coverage
             - persist_to_workspace:
                 root: .
                 paths:
