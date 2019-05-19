@@ -1,0 +1,46 @@
+openapi: 3.0.0
+info:
+  title: forum
+  description: forum api spec for homework project
+  version: 0.0.1
+servers:
+  - url: http://localhost:8001/
+    description: local server
+paths:
+  /:
+    get:
+      summary: health check
+      operationId: health
+      responses:
+        '200':
+          description: healthy endpoint
+  /entries:
+    post:
+      summary: creates a new forum post entry
+      operationId: postEntry
+      tags:
+        - entries
+      requestBody:
+        description: a JSON object representing an entry
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entry'
+      responses:
+        '200':
+          description: a JSON object containing the entry text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entry'
+components:
+  schemas:
+    entry:
+      type: object
+      required: 
+        - content
+      properties:
+        content:
+          type: string
+      

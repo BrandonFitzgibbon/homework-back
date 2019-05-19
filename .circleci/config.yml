@@ -1,18 +1,65 @@
-version: 2
+version: 2.1
 jobs:
     build:
-      docker:
-        - image: circleci/node:latest
-      steps:
-          - checkout
-          - run:
-              name: Versions
-              command: |
-                node --version
-                npm --version
-          - run:
-              name: Dependencies
-              command: npm install
-          - run:
-              name: Tests
-              command: npm test
+        docker:
+            - image: circleci/node:latest 
+        steps:
+            - checkout
+            - run:
+                name: Versions
+                command: |
+                    node --version
+                    npm --version
+            - run:
+                name: Dependencies
+                command: npm install
+            - run:
+                name: Lint
+                command: npm run lint
+            - run:
+                name: Compile
+                command: ./node_modules/typescript/bin/tsc
+            - run:
+                name: Coverage & Test
+                command: npm run coverage
+            - persist_to_workspace:
+                root: .
+                paths:
+                    - ./dist
+                    - ./spec
+                    - package.json
+                    - Dockerfile
+    publish:
+        docker:
+            - image: circleci/python:latest-node
+        steps:
+            - attach_workspace:
+                at: .
+            - setup_remote_docker:
+                docker_layer_caching: true
+            - run:
+                name: Dependencies
+                command: npm install --only=prod
+            - run:
+                name: Publish
+                command: |
+                    TAG=latest
+                    curl -O https://bootstrap.pypa.io/get-pip.py
+                    python3 get-pip.py --user
+                    pip3 install awscli --upgrade --user
+                    export PATH=/home/circleci/.local/bin:$PATH
+                    aws configure set aws_access_key_id $AWS_ACCESS
+                    aws configure set aws_secret_access_key $AWS_SECRET
+                    $(aws ecr get-login --no-include-email --region ca-central-1)
+                    docker build -t homework:$TAG .
+                    docker tag homework:$TAG 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
+                    docker push 160447282053.dkr.ecr.ca-central-1.amazonaws.com/homework:$TAG
+workflows:
+    version: 2
+    workflow:
+        jobs:
+        - build
+        - publish:
+            context: AWS Deploy
+            requires:
+              - build
