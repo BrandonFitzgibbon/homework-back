@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 
 export const operations = {
-    health: function(req: Request, res: Response) {
+    health(req: Request, res: Response) {
         res.sendStatus(200)
     },
-    postEntry: function(req: Request, res: Response) {
+    postEntry(req: Request, res: Response) {
         res.send(req.body)
     }
 }
