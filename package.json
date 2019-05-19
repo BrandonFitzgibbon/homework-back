@@ -9,7 +9,7 @@
     "compile-start": "npm run compile && npm start",
     "test": "ts-mocha ./test/api.ts --exit",
     "lintsrc": "tslint -c tslint.json 'src/**/*.ts'",
-    "linttest": "tslint -c tslint.test.json 'test/**/*.ts",
+    "linttest": "tslint -c tslint.test.json 'test/**/*.ts'",
     "lint": "npm run lintsrc && npm run linttest"
   },
   "repository": {
