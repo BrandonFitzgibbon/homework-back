@@ -6,18 +6,42 @@ info:
 servers:
   - url: http://localhost:8001/
     description: local server
+  - url: https://api.brandonfitzgibbon.com
+    description: production server
 paths:
   /:
     get:
-      summary: health check
+      summary: health check for endpoint monitoring
+      tags:
+        - health
       operationId: health
       responses:
         '200':
           description: healthy endpoint
   /entries:
+    get:
+      summary: gets all forum post entries
+      operationId: getEntries
+      tags:
+        - entries
+      responses:
+        '200':
+          description: a JSON array of entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/entry'
+        '503':
+          description: something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
     post:
-      summary: creates a new forum post entry
-      operationId: postEntry
+      summary: creates a new forum post entries
+      operationId: postEntries
       tags:
         - entries
       requestBody:
@@ -26,21 +50,63 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/entry'
+              type: array
+              items:
+                $ref: '#/components/schemas/entry'
       responses:
         '200':
           description: a JSON object containing the entry text
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/entry'
+                type: array
+                items:
+                  $ref: '#/components/schemas/entry'
+        '503':
+          description: something went wrong
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errors'
 components:
   schemas:
-    entry:
+    dataItem:
       type: object
-      required: 
-        - content
+      required:
+        - _id
       properties:
-        content:
+        _id:
           type: string
-      
+          readOnly: true
+    entry:
+      allOf:
+        - $ref: '#/components/schemas/dataItem'
+        - type: object
+          required: 
+            - content
+            - dateTime
+          properties:
+            content:
+              type: string
+            dateTime:
+              type: string
+              format: date-time
+              readOnly: true
+    errors:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/error'
+    error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        location:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
