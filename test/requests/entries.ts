@@ -1,5 +1,5 @@
-import { entries as entriesData } from '../data/entries'
 import createServer from '../../src/app'
+import { entries as entriesData } from '../data/entries'
 import MockDataService from '../mocks/dataServiceMock';
 
 const readyMockDataService = new MockDataService(entriesData, true)

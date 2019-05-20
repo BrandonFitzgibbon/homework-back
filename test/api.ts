@@ -1,10 +1,10 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
-import entries from './requests/entries'
-import health from './requests/health'
 import createApp from '../src/app'
 import { entries as entriesData } from './data/entries'
 import MockDataService from './mocks/dataServiceMock';
+import entries from './requests/entries'
+import health from './requests/health'
 
 chai.should()
 chai.use(chaiHttp)

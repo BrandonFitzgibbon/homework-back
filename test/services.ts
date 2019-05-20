@@ -1,6 +1,6 @@
-import timeStamper from '../src/services/timeStamper'
 import chai from 'chai'
 import moment = require('moment');
+import timeStamper from '../src/services/timeStamper'
 chai.should()
 
 describe('time stamper stamps targets', () => {
