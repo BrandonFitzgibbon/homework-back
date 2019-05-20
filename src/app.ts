@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import express from 'express'
 import { initialize } from 'express-openapi'
 import MongoDataService from './data/mongo'
-import { IEntry, IDataService } from './interfaces/interfaces'
+import { IDataService, IEntry } from './interfaces/interfaces'
 import { operations } from './operations'
 
 dotenv.config()
