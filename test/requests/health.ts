@@ -1,5 +1,12 @@
+import createServer from '../../src/app'
+import MockDataService from '../mocks/dataServiceMock';
+
+const mockDataService = new MockDataService([], true)
+const app = createServer(mockDataService, 9100)
+
 const health = [
     {
+        app,
         description: 'should return ok',
         method: 'get',
         path: '/',

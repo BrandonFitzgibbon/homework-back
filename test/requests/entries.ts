@@ -1,25 +1,129 @@
+import { entries as entriesData } from '../data/entries'
+import createServer from '../../src/app'
+import MockDataService from '../mocks/dataServiceMock';
+
+const readyMockDataService = new MockDataService(entriesData, true)
+const readyForcedErrorsMockDataService = new MockDataService(entriesData, true, true)
+const notReadyMockDataService = new MockDataService(entriesData, false)
+const readyApp = createServer(readyMockDataService, 9000)
+const forcedErrorsApp = createServer(readyForcedErrorsMockDataService, 9002)
+const notReadyApp = createServer(notReadyMockDataService, 9001)
 const entries = [
     {
-        description: 'should return posted entries',
-        method: 'post',
+        app: readyApp,
+        description: 'should return mock data',
+        method: 'get',
         path: '/entries',
-        requestBody: {
-            content: "hello, world"
-        },
         expectedResponse: {
             code: 200,
+            body: entriesData
+        }
+    },
+    {
+        app: forcedErrorsApp,
+        description: 'should return error if service returns error',
+        method: 'get',
+        path: '/entries',
+        expectedResponse: {
+            code: 500,
             body: {
-                content: "hello, world"
+                errors: [
+                    {
+                        errorCode: "500",
+                        location: "get entries",
+                        message: "something went wrong",
+                        path: ""
+                    }
+                ]
             }
         }
     },
     {
+        app: notReadyApp,
+        description: "should return 503 when data service isn't ready",
+        method: 'get',
+        path: '/entries',
+        expectedResponse: {
+            code: 503,
+            body: {
+                errors: [
+                    {
+                        errorCode: "503",
+                        location: "data service",
+                        message: "data service isn't ready",
+                        path: ""
+                    }
+                ]
+            }
+        }
+    },
+    {
+        app: readyApp,
+        description: 'should return posted entries',
+        method: 'post',
+        path: '/entries',
+        requestBody: [{
+            content: "hello, world"
+        }],
+        expectedResponse: {
+            code: 200,
+            body: [{
+                content: "hello, world"
+            }]
+        }
+    },
+    {
+        app: notReadyApp,
+        description: 'should return posted entries',
+        method: 'post',
+        path: '/entries',
+        requestBody: [{
+            content: "hello, world"
+        }],
+        expectedResponse: {
+            code: 503,
+            body: {
+                errors: [
+                    {
+                        errorCode: "503",
+                        location: "data service",
+                        message: "data service isn't ready",
+                        path: ""
+                    }
+                ]
+            }
+        }
+    },
+    {
+        app: forcedErrorsApp,
+        description: 'should return error if service returns error',
+        method: 'post',
+        path: '/entries',
+        requestBody: [{
+            content: "hello, world"
+        }],
+        expectedResponse: {
+            code: 500,
+            body: {
+                errors: [
+                    {
+                        errorCode: "500",
+                        location: "get entries",
+                        message: "something went wrong",
+                        path: ""
+                    }
+                ]
+            }
+        }
+    },
+    {
+        app: readyApp,
         description: 'should return bad request error (number instead of string)',
         method: 'post',
         path: '/entries',
-        requestBody: {
+        requestBody: [{
             content: 33432
-        },
+        }],
         expectedResponse: {
             code: 400,
             body: {
@@ -28,22 +132,23 @@ const entries = [
                         errorCode: "type.openapi.validation",
                         location: "body",
                         message: "should be string",
-                        path: "content",
+                        path: "[0].content",
                     }
                 ]
             }
         }
     },
     {
+        app: readyApp,
         description: 'should return bad request error (missing required property)',
         method: 'post',
         path: '/entries',
-        requestBody: {
+        requestBody: [{
             id: 3,
             oranges: {
                 color: 'orange'
             }
-        },
+        }],
         expectedResponse: {
             code: 400,
             body: {
@@ -52,7 +157,7 @@ const entries = [
                         errorCode: "required.openapi.validation",
                         location: "body",
                         message: "should have required property 'content'",
-                        path: "content",
+                        path: "[0].content",
                     }
                 ]
             }
