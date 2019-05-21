@@ -24,6 +24,13 @@ paths:
       operationId: getEntries
       tags:
         - entries
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: false
+          description: name of entry author
       responses:
         '200':
           description: a JSON array of entries
@@ -84,9 +91,12 @@ components:
         - type: object
           required: 
             - content
+            - name
             - dateTime
           properties:
             content:
+              type: string
+            name:
               type: string
             dateTime:
               type: string

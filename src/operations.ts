@@ -18,7 +18,7 @@ const readyCheck = async (req: Request, res: Response, readyFunction: (req: Requ
 }
 
 const getEntries = async (req: Request, res: Response) => {
-    const [error, result] = await req.entryService.getItems({})
+    const [error, result] = await req.entryService.getItems(req.query)
     if (result) {
         res.send(timeStamper.convertMomentToStamp(result))
     } else {
@@ -36,7 +36,7 @@ const getEntries = async (req: Request, res: Response) => {
 const postEntries = async (req: Request, res: Response) => {
     const [error, result] = await req.entryService.newItems(timeStamper.stampObject(req.body))
     if (result) {
-        res.send(req.body)
+        res.send(timeStamper.convertMomentToStamp(result))
     } else {
         res.status(500).send({errors: [
             {

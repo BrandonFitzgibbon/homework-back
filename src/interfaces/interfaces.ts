@@ -12,6 +12,7 @@ export interface IDataItem {
 
 export interface IEntry extends IDataItem {
     content: string,
+    name: string
     dateTime: Moment
 }
 

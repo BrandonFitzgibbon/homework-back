@@ -1,5 +1,6 @@
 import { MongoClient, MongoError } from 'mongodb'
 import { IDataItem, IDataService } from '../interfaces/interfaces';
+import timeStamper from '../services/timeStamper';
 
 export default class MongoDataService<T extends IDataItem> implements IDataService<T> {    
     public ready: Promise<[boolean, Error?]>
@@ -36,7 +37,7 @@ export default class MongoDataService<T extends IDataItem> implements IDataServi
             let result 
             try {
                 result = await db.collection(this.collection).insertMany(items)
-                return [undefined, result.ops]
+                return [undefined, timeStamper.convertStampToMoment(result.ops)]
             } catch (err) {
                 return [err]
             }

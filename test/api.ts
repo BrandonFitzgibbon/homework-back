@@ -34,6 +34,12 @@ describe('api entry requests', () => {
             return chai.request(entry.app)[entry.method](entry.path)
             .send(entry.requestBody)
             .then(result => {
+                if (entry.writeOnly) {
+                    entry.expectedResponse.body[0] = {
+                        dateTime: result.body[0].dateTime,
+                        ...entry.expectedResponse.body[0]
+                    }
+                }
                 result.status.should.eql(entry.expectedResponse.code)
                 result.body.should.eql(entry.expectedResponse.body)
             })

@@ -63,14 +63,17 @@ const entries = [
         method: 'post',
         path: '/entries',
         requestBody: [{
-            content: "hello, world"
+            content: "hello, world",
+            name: "bob"
         }],
+        writeOnly: true,
         expectedResponse: {
             code: 200,
             body: [{
-                content: "hello, world"
+                content: "hello, world",
+                name: "bob",
             }]
-        }
+        },
     },
     {
         app: notReadyApp,
@@ -78,7 +81,8 @@ const entries = [
         method: 'post',
         path: '/entries',
         requestBody: [{
-            content: "hello, world"
+            content: "hello, world",
+            name: "bob"
         }],
         expectedResponse: {
             code: 503,
@@ -100,7 +104,8 @@ const entries = [
         method: 'post',
         path: '/entries',
         requestBody: [{
-            content: "hello, world"
+            content: "hello, world",
+            name: "bob"
         }],
         expectedResponse: {
             code: 500,
@@ -122,7 +127,8 @@ const entries = [
         method: 'post',
         path: '/entries',
         requestBody: [{
-            content: 33432
+            content: 1231,
+            name: "bob"
         }],
         expectedResponse: {
             code: 400,
@@ -145,6 +151,7 @@ const entries = [
         path: '/entries',
         requestBody: [{
             id: 3,
+            name: "bob",
             oranges: {
                 color: 'orange'
             }
