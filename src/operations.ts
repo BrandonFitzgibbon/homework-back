@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import timeStamper from './services/timeStamper'
 import { IDataService } from './interfaces/interfaces';
+import timeStamper from './services/timeStamper'
 
 const readyCheck = async (req: Request, res: Response, service: IDataService<any>, readyFunction: (req: Request, res: Response) => Promise<void>) => {
     const [ready, error] = await service.ready
