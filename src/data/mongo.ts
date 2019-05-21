@@ -1,5 +1,6 @@
-import { MongoClient, MongoError } from 'mongodb'
+import { MongoClient, MongoError, ObjectId, ObjectID } from 'mongodb'
 import { IDataItem, IDataService } from '../interfaces/interfaces';
+import timeStamper from '../services/timeStamper';
 
 export default class MongoDataService<T extends IDataItem> implements IDataService<T> {    
     public ready: Promise<[boolean, Error?]>
@@ -36,7 +37,22 @@ export default class MongoDataService<T extends IDataItem> implements IDataServi
             let result 
             try {
                 result = await db.collection(this.collection).insertMany(items)
-                return [undefined, result.ops]
+                return [undefined, timeStamper.convertStampToMoment(result.ops)]
+            } catch (err) {
+                return [err]
+            }
+        } else {
+            return [new Error("Service isn't ready")]
+        }
+    }
+
+    public getItem = async (id: string) : Promise<[Error?, T?]> => {
+        if (this.client && this.collection) {
+            const db = this.client.db(this.database)
+            let result 
+            try {
+                result = await db.collection(this.collection).findOne(new ObjectID(id))
+                return [undefined, result]
             } catch (err) {
                 return [err]
             }
