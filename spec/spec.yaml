@@ -190,7 +190,7 @@ components:
         - $ref: '#/components/schemas/entry'
         - type: object
           required:
-            - replyTarget
+            - target_id
           properties:
             target_id:
               type: string

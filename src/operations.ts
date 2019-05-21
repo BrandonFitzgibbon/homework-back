@@ -18,8 +18,13 @@ const readyCheck = async (req: Request, res: Response, service: IDataService<any
     }
 }
 
+
+// gets entries that don't have a target_id are top level and not replies
 const getEntries = async (req: Request, res: Response) => {
-    const [error, result] = await req.entryService.getItems(req.query)
+    const [error, result] = await req.entryService.getItems({
+        ...req.query,
+        target_id: null
+    })
     if (result) {
         res.send(timeStamper.convertMomentToStamp(result))
     } else {
