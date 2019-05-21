@@ -1,17 +1,16 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import createApp from '../src/app'
-import { entries as entriesData } from './data/entries'
-import MockDataService from './mocks/dataServiceMock';
 import entries from './requests/entries'
 import health from './requests/health'
+import replies from './requests/replies'
 
 chai.should()
 chai.use(chaiHttp)
 
 describe('can start server', () => {
     it ('creates application properly', () => {
-        const app = createApp(new MockDataService(entriesData, true))
+        const app = createApp(undefined, undefined)
         app.should.not.be.eql(undefined)
     })
 })
@@ -42,6 +41,26 @@ describe('api entry requests', () => {
                 }
                 result.status.should.eql(entry.expectedResponse.code)
                 result.body.should.eql(entry.expectedResponse.body)
+            })
+        })
+    })
+})
+
+describe('api reply requests', () => {
+    replies.forEach(reply => {
+        it(reply.description, () => {
+            return chai.request(reply.app)[reply.method](reply.path)
+            .send(reply.requestBody)
+            .then(result => {
+                if (reply.writeOnly) {
+                    reply.expectedResponse.body = {
+                        ...reply.expectedResponse.body,
+                        dateTime: result.body.dateTime,
+                        target_id: reply.pathId,
+                    } as any
+                }
+                result.status.should.eql(reply.expectedResponse.code)
+                result.body.should.eql(reply.expectedResponse.body)
             })
         })
     })

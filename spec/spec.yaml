@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: forum
   description: forum api spec for homework project
-  version: 0.0.1
+  version: 0.0.2
 servers:
   - url: http://localhost:8001/
     description: local server
@@ -41,13 +41,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/entry'
         '503':
-          description: something went wrong
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/errors'
+          $ref: '#/components/responses/NotReady'
     post:
-      summary: creates a new forum post entries
+      summary: creates new forum posts entries
       operationId: postEntries
       tags:
         - entries
@@ -70,12 +66,99 @@ paths:
                 items:
                   $ref: '#/components/schemas/entry'
         '503':
-          description: something went wrong
+          $ref: '#/components/responses/NotReady'
+  /entries/{id}:
+    get:
+      summary: get an entry by id
+      operationId: getEntry
+      tags:
+        - entries
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: entry id
+      responses:
+        '200':
+          description: an JSON object representing an entry
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/errors'
+                $ref: '#/components/schemas/entry'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/NotReady'
+  /entries/{id}/replies:
+    get:
+      summary: get all replies to the entry referenced by path id
+      operationId: getReplies
+      tags:
+        - replies
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: entry id
+      responses:
+        '200':
+          description: an JSON object representing a reply
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/NotReady'
+    post:
+      summary: post an entry as a reply to the entry referenced by path id
+      operationId: postReply
+      tags:
+        - replies
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: entry id
+      requestBody:
+        description: a JSON object representing an entry
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entry'
+      responses:
+        '200':
+          description: an JSON object representing a reply to an entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '503':
+          $ref: '#/components/responses/NotReady'
 components:
+  responses:
+    NotReady:
+      description: service not ready
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errors'
+    NotFound:
+      description: not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errors'
   schemas:
     dataItem:
       type: object
@@ -102,6 +185,15 @@ components:
               type: string
               format: date-time
               readOnly: true
+    reply:
+      allOf:
+        - $ref: '#/components/schemas/entry'
+        - type: object
+          required:
+            - replyTarget
+          properties:
+            target_id:
+              type: string
     errors:
       type: object
       properties:

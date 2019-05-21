@@ -5,13 +5,13 @@ import MockDataService from '../mocks/dataServiceMock';
 const readyMockDataService = new MockDataService(entriesData, true)
 const readyForcedErrorsMockDataService = new MockDataService(entriesData, true, true)
 const notReadyMockDataService = new MockDataService(entriesData, false)
-const readyApp = createServer(readyMockDataService, 9000)
-const forcedErrorsApp = createServer(readyForcedErrorsMockDataService, 9002)
-const notReadyApp = createServer(notReadyMockDataService, 9001)
+const readyApp = createServer(readyMockDataService, undefined, 9000)
+const forcedErrorsApp = createServer(readyForcedErrorsMockDataService, undefined, 9002)
+const notReadyApp = createServer(notReadyMockDataService, undefined, 9001)
 const entries = [
     {
         app: readyApp,
-        description: 'should return mock data',
+        description: 'should return entries',
         method: 'get',
         path: '/entries',
         expectedResponse: {
@@ -21,7 +21,7 @@ const entries = [
     },
     {
         app: forcedErrorsApp,
-        description: 'should return error if service returns error',
+        description: 'should return error if service returns error getting entries',
         method: 'get',
         path: '/entries',
         expectedResponse: {
@@ -77,7 +77,7 @@ const entries = [
     },
     {
         app: notReadyApp,
-        description: 'should return posted entries',
+        description: "should return 503 when data service isn't ready",
         method: 'post',
         path: '/entries',
         requestBody: [{
@@ -100,7 +100,7 @@ const entries = [
     },
     {
         app: forcedErrorsApp,
-        description: 'should return error if service returns error',
+        description: 'should return error if service returns error posting entries',
         method: 'post',
         path: '/entries',
         requestBody: [{
@@ -165,6 +165,54 @@ const entries = [
                         location: "body",
                         message: "should have required property 'content'",
                         path: "[0].content",
+                    }
+                ]
+            }
+        }
+    },
+    {
+        app:readyApp,
+        description: 'should return entry by id',
+        method: 'get',
+        path: '/entries/1',
+        expectedResponse: {
+            code: 200,
+            body: entriesData.find(i => i._id === '1')
+        }
+    },
+    {
+        app:readyApp,
+        description: 'should return entry by id',
+        method: 'get',
+        path: '/entries/9000',
+        expectedResponse: {
+            code: 404,
+            body: {
+                errors: [
+                    {
+                        errorCode: "404",
+                        location: "get entry",
+                        message: "not found",
+                        path: "id: 9000"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        app:forcedErrorsApp,
+        description: 'should return error getting entry by id',
+        method: 'get',
+        path: '/entries/1',
+        expectedResponse: {
+            code: 500,
+            body: {
+                errors: [
+                    {
+                        errorCode: "500",
+                        location: "get entry",
+                        message: "something went wrong",
+                        path: ""
                     }
                 ]
             }

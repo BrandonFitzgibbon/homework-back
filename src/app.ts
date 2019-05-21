@@ -3,19 +3,19 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import { initialize } from 'express-openapi'
-import MongoDataService from './data/mongo'
-import { IDataService, IEntry } from './interfaces/interfaces'
+import { IDataService, IEntry, IReply } from './interfaces/interfaces'
 import { operations } from './operations'
 
 dotenv.config()
 
-const createApp = (entryService: IDataService<IEntry>, port?: number) : Express.Application => {
+const createApp = (entryService: IDataService<IEntry>, replyService: IDataService<IReply>, port?: number) : Express.Application => {
     const app = express()
     app.use(bodyParser.json())
     app.use(cors())
 
     app.use((req, res, next) => {
         req.entryService = entryService
+        req.replyService = replyService
         next()
     })
 

@@ -31,6 +31,14 @@ export default class MockDataService<T extends IDataItem> implements IDataServic
         }
     }
 
+    public getItem = async (id: string) : Promise<[Error?, T?]> => {
+        if (this.forceError) {
+            return [new Error("something went wrong")]
+        } else {
+            return [undefined, this.items.find(i => i._id === id)]
+        }
+    }
+
     private setReady = (ready: boolean) : Promise<[boolean, Error?]> => {
         return new Promise((resolve, reject) => {
             if (ready) {
