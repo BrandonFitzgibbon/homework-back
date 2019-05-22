@@ -43,8 +43,8 @@ paths:
         '503':
           $ref: '#/components/responses/NotReady'
     post:
-      summary: creates new forum posts entries
-      operationId: postEntries
+      summary: creates new forum post entry
+      operationId: postEntry
       tags:
         - entries
       requestBody:
@@ -53,18 +53,14 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/entry'
+              $ref: '#/components/schemas/entry'
       responses:
         '200':
           description: a JSON object containing the entry text
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/entry'
+                $ref: '#/components/schemas/entry'
         '503':
           $ref: '#/components/responses/NotReady'
   /entries/{id}:
@@ -176,6 +172,10 @@ components:
             - content
             - name
             - dateTime
+            - city
+            - lat
+            - long
+            - temperature
           properties:
             content:
               type: string
@@ -184,6 +184,17 @@ components:
             dateTime:
               type: string
               format: date-time
+              readOnly: true
+            city:
+              type: string
+            lat:
+              type: number
+              readOnly: true
+            long: 
+              type: number
+              readOnly: true
+            temperature:
+              type: number
               readOnly: true
     reply:
       allOf:

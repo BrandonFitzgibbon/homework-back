@@ -10,7 +10,7 @@ chai.use(chaiHttp)
 
 describe('can start server', () => {
     it ('creates application properly', () => {
-        const app = createApp(undefined, undefined)
+        const app = createApp(undefined, undefined, undefined, undefined)
         app.should.not.be.eql(undefined)
     })
 })
@@ -34,9 +34,9 @@ describe('api entry requests', () => {
             .send(entry.requestBody)
             .then(result => {
                 if (entry.writeOnly) {
-                    entry.expectedResponse.body[0] = {
-                        dateTime: result.body[0].dateTime,
-                        ...entry.expectedResponse.body[0]
+                    entry.expectedResponse.body = {
+                        dateTime: result.body.dateTime,
+                        ...entry.expectedResponse.body
                     }
                 }
                 result.status.should.eql(entry.expectedResponse.code)

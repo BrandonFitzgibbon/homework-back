@@ -1,13 +1,16 @@
 import createServer from '../../src/app'
 import { replies as repliesData } from '../data/replies'
 import MockDataService from '../mocks/dataServiceMock';
+import MockPlaceService from '../mocks/placeServiceMock';
+import MockWeatherService from '../mocks/weatherServiceMock';
 
+const temperature = 22
+const placeServiceMock = new MockPlaceService()
+const weatherService = new MockWeatherService(temperature)
 const readyMockDataService = new MockDataService(repliesData, true)
 const readyForcedErrorsMockDataService = new MockDataService(repliesData, true, true)
-const notReadyMockDataService = new MockDataService(repliesData, false)
-const readyApp = createServer( undefined, readyMockDataService, 9200)
-const forcedErrorsApp = createServer(undefined, readyForcedErrorsMockDataService, 9202)
-const notReadyApp = createServer(undefined, notReadyMockDataService, 9201)
+const readyApp = createServer( undefined, readyMockDataService, placeServiceMock, weatherService, 9200)
+const forcedErrorsApp = createServer(undefined, readyForcedErrorsMockDataService, placeServiceMock, weatherService, 9202)
 const replies = [
     {
         app: readyApp,
@@ -61,14 +64,19 @@ const replies = [
         pathId: '1',
         requestBody: {
             "content": "even more replies",
-            "name": "Marge"
+            "name": "Marge",
+            "city": "toronto"
         },
         writeOnly: true,
         expectedResponse: {
             code: 200,
             body: {
                 "content": "even more replies",
-                "name": "Marge"
+                "name": "Marge",
+                city: 'Toronto',
+                lat: 43.653226,
+                long: -79.3831843,
+                temperature
             }
         }
     },
@@ -80,7 +88,8 @@ const replies = [
         pathId: '1',
         requestBody: {
             "content": "even more replies",
-            "name": "Marge"
+            "name": "Marge",
+            "city": "toronto"
         },
         expectedResponse: {
             code: 404,
@@ -101,7 +110,8 @@ const replies = [
         path: '/entries/1/replies',
         requestBody: {
             "content": "even more replies",
-            "name": "Marge"
+            "name": "Marge",
+            "city": "toronto"
         },
         expectedResponse: {
             code: 500,

@@ -22,7 +22,7 @@ export default class MongoDataService<T extends IDataItem> implements IDataServi
             let result 
             try {
                 result = await db.collection(this.collection).find(query).toArray()
-                return [undefined, result]
+                return [undefined, timeStamper.convertStampToMoment(result)]
             } catch (err) {
                 return [err]
             }
@@ -31,13 +31,13 @@ export default class MongoDataService<T extends IDataItem> implements IDataServi
         }
     }
 
-    public newItems = async (items: T[]) : Promise<[Error?, T[]?]> => {
+    public newItem = async (item: T) : Promise<[Error?, T?]> => {
         if (this.client && this.collection) {
             const db = this.client.db(this.database)
             let result 
             try {
-                result = await db.collection(this.collection).insertMany(items)
-                return [undefined, timeStamper.convertStampToMoment(result.ops)]
+                result = await db.collection(this.collection).insertOne(item)
+                return [undefined, timeStamper.convertStampToMoment(result.ops[0])]
             } catch (err) {
                 return [err]
             }
@@ -52,7 +52,7 @@ export default class MongoDataService<T extends IDataItem> implements IDataServi
             let result 
             try {
                 result = await db.collection(this.collection).findOne(new ObjectID(id))
-                return [undefined, result]
+                return [undefined, timeStamper.convertStampToMoment(result)]
             } catch (err) {
                 return [err]
             }
