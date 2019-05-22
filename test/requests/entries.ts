@@ -1,13 +1,22 @@
 import createServer from '../../src/app'
 import { entries as entriesData } from '../data/entries'
 import MockDataService from '../mocks/dataServiceMock';
+import MockPlaceService from '../mocks/placeServiceMock';
+import MockWeatherService from '../mocks/weatherServiceMock';
 
+const temperature = 27
+const placeServiceMock = new MockPlaceService()
+const errorPlaceServiceMock = new MockPlaceService(true)
+const weatherService = new MockWeatherService(temperature)
+const errorWeatherService = new MockWeatherService(temperature, true)
 const readyMockDataService = new MockDataService(entriesData, true)
 const readyForcedErrorsMockDataService = new MockDataService(entriesData, true, true)
 const notReadyMockDataService = new MockDataService(entriesData, false)
-const readyApp = createServer(readyMockDataService, undefined, 9000)
-const forcedErrorsApp = createServer(readyForcedErrorsMockDataService, undefined, 9002)
-const notReadyApp = createServer(notReadyMockDataService, undefined, 9001)
+const readyApp = createServer(readyMockDataService, undefined, placeServiceMock, weatherService, 9000)
+const badPlaceServiceApp = createServer(readyMockDataService, undefined, errorPlaceServiceMock, weatherService, 9003)
+const badWeatherServiceApp = createServer(readyMockDataService, undefined, placeServiceMock, errorWeatherService, 9004)
+const forcedErrorsApp = createServer(readyForcedErrorsMockDataService, undefined, placeServiceMock, weatherService, 9002)
+const notReadyApp = createServer(notReadyMockDataService, undefined, placeServiceMock, weatherService, 9001)
 const entries = [
     {
         app: readyApp,
@@ -62,17 +71,22 @@ const entries = [
         description: 'should return posted entries',
         method: 'post',
         path: '/entries',
-        requestBody: [{
+        requestBody: {
             content: "hello, world",
-            name: "bob"
-        }],
+            name: "bob",
+            city: "Toronto"
+        },
         writeOnly: true,
         expectedResponse: {
             code: 200,
-            body: [{
+            body: {
                 content: "hello, world",
                 name: "bob",
-            }]
+                city: 'Toronto',
+                lat: 43.653226,
+                long: -79.3831843,
+                temperature
+            }
         },
     },
     {
@@ -80,10 +94,11 @@ const entries = [
         description: "should return 503 when data service isn't ready",
         method: 'post',
         path: '/entries',
-        requestBody: [{
+        requestBody: {
             content: "hello, world",
-            name: "bob"
-        }],
+            name: "bob",
+            city: "Toronto"
+        },
         expectedResponse: {
             code: 503,
             body: {
@@ -103,19 +118,68 @@ const entries = [
         description: 'should return error if service returns error posting entries',
         method: 'post',
         path: '/entries',
-        requestBody: [{
+        requestBody: {
             content: "hello, world",
-            name: "bob"
-        }],
+            name: "bob",
+            city: "Toronto"
+        },
         expectedResponse: {
             code: 500,
             body: {
                 errors: [
                     {
                         errorCode: "500",
-                        location: "get entries",
+                        location: "post entry",
                         message: "something went wrong",
                         path: ""
+                    }
+                ]
+            }
+        }
+    },
+    {
+        app: badWeatherServiceApp,
+        description: 'should return error if weather service fails',
+        method: 'post',
+        path: '/entries',
+        requestBody: {
+            content: "hello, world",
+            name: "bob",
+            city: "Toronto"
+        },
+        expectedResponse: {
+            code: 404,
+            body: {
+                errors: [
+                    {
+                        errorCode: "404",
+                        location: "weather service",
+                        message: "weather data not found",
+                        path: "Toronto"
+                    }
+                ]
+            }
+        }
+    },
+    {
+        app: badPlaceServiceApp,
+        description: 'should return error if place service fails',
+        method: 'post',
+        path: '/entries',
+        requestBody: {
+            content: "hello, world",
+            name: "bob",
+            city: "Toronto"
+        },
+        expectedResponse: {
+            code: 404,
+            body: {
+                errors: [
+                    {
+                        errorCode: "404",
+                        location: "location service",
+                        message: "location not found",
+                        path: "Toronto"
                     }
                 ]
             }
@@ -126,10 +190,11 @@ const entries = [
         description: 'should return bad request error (number instead of string)',
         method: 'post',
         path: '/entries',
-        requestBody: [{
+        requestBody: {
             content: 1231,
-            name: "bob"
-        }],
+            name: "bob",
+            city: "Toronto"
+        },
         expectedResponse: {
             code: 400,
             body: {
@@ -138,7 +203,7 @@ const entries = [
                         errorCode: "type.openapi.validation",
                         location: "body",
                         message: "should be string",
-                        path: "[0].content",
+                        path: "content",
                     }
                 ]
             }
@@ -149,13 +214,14 @@ const entries = [
         description: 'should return bad request error (missing required property)',
         method: 'post',
         path: '/entries',
-        requestBody: [{
+        requestBody: {
             id: 3,
             name: "bob",
             oranges: {
                 color: 'orange'
-            }
-        }],
+            },
+            city: "Toronto"
+        },
         expectedResponse: {
             code: 400,
             body: {
@@ -164,7 +230,7 @@ const entries = [
                         errorCode: "required.openapi.validation",
                         location: "body",
                         message: "should have required property 'content'",
-                        path: "[0].content",
+                        path: "content",
                     }
                 ]
             }

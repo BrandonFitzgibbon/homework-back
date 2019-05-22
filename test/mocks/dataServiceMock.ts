@@ -20,14 +20,12 @@ export default class MockDataService<T extends IDataItem> implements IDataServic
         }
     }
 
-    public newItems = async (items: T[]) : Promise<[Error?, T[]?]> => {
+    public newItem = async (item: T) : Promise<[Error?, T?]> => {
         if (this.forceError) {
             return [new Error("something went wrong")]
         } else {
-            this.items.forEach(item => [
-                this.items.push(item)
-            ])
-            return [undefined, items]
+            this.items.push(item)
+            return [undefined, item]
         }
     }
 

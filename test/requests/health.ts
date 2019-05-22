@@ -2,7 +2,7 @@ import createServer from '../../src/app'
 import MockDataService from '../mocks/dataServiceMock';
 
 const mockDataService = new MockDataService([], true)
-const app = createServer(mockDataService, undefined, 9100)
+const app = createServer(mockDataService, undefined, undefined, undefined, 9100)
 
 const health = [
     {
